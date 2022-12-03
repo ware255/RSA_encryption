@@ -5,7 +5,8 @@ using bint = unsigned long long;
 
 class crypto {
 private:
-    bint p, q, n, l, e, d, M;
+    bint p, q, n, l, e, d;
+    bint M, table[MAX];
 public:
     crypto();
     bint extended_euclidean(bint&, bint&);
