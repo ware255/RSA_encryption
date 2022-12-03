@@ -101,7 +101,7 @@ bint crypto::Chinese_Remainder_Theorem(bint &p, bint &q, bint &c, bint &d) {
 crypto::crypto() {
     bint* sieve = new bint[MAX];
     for (size_t i = 0; i < MAX; i++) sieve[i] = true;
-    bint k = 0, tmp;
+    bint k = 0, tmp, dumy;
     for(size_t i = 2; i <= MAX; i++) {
         if(sieve[i] == true) {
             for(size_t j = i * 2; j <= MAX; j += i) {
@@ -112,16 +112,14 @@ crypto::crypto() {
     std::random_device rnd;
     std::mt19937_64 mt(rnd());
     std::uniform_int_distribution<> rand(300000, MAX);
+    dumy = -1;
     while (1) {
         tmp = rand(mt);
-        if (sieve[tmp]) {
-            p = tmp;
-        }
+        if (sieve[tmp]) p = tmp;
         tmp = rand(mt);
-        if (sieve[tmp]) {
-            q = tmp;
-            break;
-        }
+        if (sieve[tmp]) q = tmp;
+        if (p != 0 && q != 0) dumy = 0;
+        if (dumy == 0) break;
     }
     delete [] sieve;
 }
