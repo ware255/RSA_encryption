@@ -150,13 +150,12 @@ void crypto::start() {
     printf("plain_num : ");
     scanf("%u", &plain_num);
 
-    //ˆÃ†‰»
+    //æš—å·åŒ–
     bint encrypted_num = modPow(plain_num, e, n);
     printf("encrypted_num: %u\n", encrypted_num);
 
+    //å¾©å·
     M = Chinese_Remainder_Theorem(p, q, encrypted_num, d);
-
-    //•œ†‰»
     bint decrypted_num = modPow(encrypted_num, d, n);
     printf("decrypted_num:      %u\n", decrypted_num);
     printf("decrypted_num(CRT): %u\n", M);
