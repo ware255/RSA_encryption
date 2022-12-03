@@ -3,7 +3,6 @@
 #include <ctime>
 #include <cmath>
 #include <random>
-#include <vector>
 #define MAX 800000
 using bint = unsigned long long;
 
