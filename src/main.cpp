@@ -129,8 +129,6 @@ void crypto::init() {
 
 void crypto::start() {
     while (1) {
-        printf("P : %lld   Q : %lld\n", p, q);
-
         n = p * q;
 
         l = lcm(p-1, q-1);
@@ -144,6 +142,7 @@ void crypto::start() {
         if (((e * d) % l) == 1) break;
         init();
     }
+    printf("P : %lld   Q : %lld\n", p, q);
 
     printf("N : %lld   L : %lld   E : %lld   D : %lld\n", n, l, e, d);
 
