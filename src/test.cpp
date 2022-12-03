@@ -30,7 +30,7 @@ bint crypto::extended_euclidean(bint& a, bint& b) {
         tmp = y, y = v, v = tmp;
     }
     if (x > y) return y;
-    else return x;
+    return x;
 }
 
 bint crypto::gcd(bint x, bint y) {
@@ -115,6 +115,11 @@ crypto::crypto() {
         if (sieve[tmp]) q = tmp;
         if (p != 0 && q != 0) dumy = 0;
         if (dumy == 0) break;
+    }
+    if (p < q) {
+        tmp = p;
+        p = q;
+        q = tmp;
     }
     delete [] sieve;
 }
