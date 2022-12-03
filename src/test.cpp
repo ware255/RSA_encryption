@@ -1,7 +1,4 @@
 #include <cstdio>
-#include <cstdlib>
-#include <ctime>
-#include <cmath>
 #include <random>
 #define MAX 800000
 using bint = unsigned long long;
