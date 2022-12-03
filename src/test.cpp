@@ -8,7 +8,10 @@ private:
     bint p, q, n, l, e, d;
     bint M, table[MAX];
 public:
-    crypto();
+    void init();
+    crypto() {
+        init();
+    }
     bint extended_euclidean(bint&, bint&);
     bint gcd(bint, bint);
     bint lcm(bint, bint);
@@ -93,10 +96,10 @@ bint crypto::Chinese_Remainder_Theorem(bint &p, bint &q, bint &c, bint &d) {
     return m;
 }
 
-crypto::crypto() {
+void crypto::init() {
     bint* sieve = new bint[MAX];
     for (size_t i = 0; i < MAX; i++) sieve[i] = true;
-    bint k = 0, tmp, dumy;
+    bint tmp, dumy;
     for(size_t i = 2; i <= MAX; i++) {
         if(sieve[i] == true) {
             for(size_t j = i * 2; j <= MAX; j += i) {
@@ -125,20 +128,21 @@ crypto::crypto() {
 }
 
 void crypto::start() {
-    printf("P : %lld   Q : %lld\n", p, q);
+    while (1) {
+        printf("P : %lld   Q : %lld\n", p, q);
 
-    n = p * q;
+        n = p * q;
 
-    l = lcm(p-1, q-1);
+        l = lcm(p-1, q-1);
 
-    e = 23;
-    while (gcd(l, e) != 1) {
-        e++;
-    }
+        e = 65535;
+        while (gcd(l, e) != 1) {
+            e++;
+        }
 
-    d = extended_euclidean(l, e);
-    while(e * d % l != 1) {
-        d++;
+        d = extended_euclidean(l, e);
+        if (((e * d) % l) == 1) break;
+        init();
     }
 
     printf("N : %lld   L : %lld   E : %lld   D : %lld\n", n, l, e, d);
