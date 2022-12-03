@@ -15,4 +15,6 @@ Linuxの方は申し訳ありませんが、自分でコマンドを叩いてく
 [RSA暗号方式をC言語で実装](https://qiita.com/tcb78/items/3eaa4a222bd544012db5)<br>
 [【JavaScript】エラトステネスの篩を書いてみた](https://qiita.com/ikemonn/items/005b51acc72994f864ba)<br>
 [C++11 乱数 std::random 入門](http://s170199.ppp.asahi-net.or.jp/tech/cpp/random.html)<br>
-[Chinese Remainder Theorem | PicoCTF 2017 [32] Weird RSA](https://www.youtube.com/watch?v=Qvm7nDDHbWs)
+[Chinese Remainder Theorem | PicoCTF 2017 [32] Weird RSA](https://www.youtube.com/watch?v=Qvm7nDDHbWs)<br>
+[拡張ユークリッド互除法の非再帰的実装を理解する(C++)](https://scol.hatenablog.com/entry/2019/10/19/180000)<br>
+[Weak RSA decryption with Chinese-remainder theorem](https://www.geeksforgeeks.org/weak-rsa-decryption-chinese-remainder-theorem/)
