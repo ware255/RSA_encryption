@@ -120,7 +120,7 @@ crypto::crypto() {
 }
 
 void crypto::start() {
-    printf("P : %d   Q : %d\n", p, q);
+    printf("P : %lld   Q : %lld\n", p, q);
 
     n = p * q;
 
@@ -136,21 +136,21 @@ void crypto::start() {
         d++;
     }
 
-    printf("N : %d   L : %d   E : %d   D : %d\n", n, l, e, d);
+    printf("N : %lld   L : %lld   E : %lld   D : %lld\n", n, l, e, d);
 
     bint plain_num;
     printf("plain_num : ");
-    scanf("%u", &plain_num);
+    scanf("%llu", &plain_num);
 
     //暗号化
     bint encrypted_num = modPow(plain_num, e, n);
-    printf("encrypted_num: %u\n", encrypted_num);
+    printf("encrypted_num: %llu\n", encrypted_num);
 
     //復号
     M = Chinese_Remainder_Theorem(p, q, encrypted_num, d);
     bint decrypted_num = modPow(encrypted_num, d, n);
-    printf("decrypted_num:      %u\n", decrypted_num);
-    printf("decrypted_num(CRT): %u\n", M);
+    printf("decrypted_num:      %llu\n", decrypted_num);
+    printf("decrypted_num(CRT): %llu\n", M);
 }
 
 int main() {
