@@ -17,4 +17,6 @@ Linuxの方は申し訳ありませんが、自分でコマンドを叩いてく
 [C++11 乱数 std::random 入門](http://s170199.ppp.asahi-net.or.jp/tech/cpp/random.html)<br>
 [Chinese Remainder Theorem | PicoCTF 2017 [32] Weird RSA](https://www.youtube.com/watch?v=Qvm7nDDHbWs)<br>
 [拡張ユークリッド互除法の非再帰的実装を理解する(C++)](https://scol.hatenablog.com/entry/2019/10/19/180000)<br>
-[Weak RSA decryption with Chinese-remainder theorem](https://www.geeksforgeeks.org/weak-rsa-decryption-chinese-remainder-theorem/)
+[Weak RSA decryption with Chinese-remainder theorem](https://www.geeksforgeeks.org/weak-rsa-decryption-chinese-remainder-theorem/)<br>
+[RSA 暗号と中国剰余の定理による高速化についてのまとめ](https://blog.yukii.work/posts/2021-12-22-rsa-and-chinese-remainder-theorem/)<br>
+[RSA для программиста](https://z0mbie.daemonlab.org/rsa.html)
