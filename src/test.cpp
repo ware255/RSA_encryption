@@ -29,7 +29,7 @@ bint crypto::extended_euclidean(bint& a, bint& b) {
         y -= k * v;
         tmp = y, y = v, v = tmp;
     }
-    if (x < y) return y;
+    if (x > y) return y;
     else return x;
 }
 
