@@ -1,15 +1,15 @@
 #include <cstdio>
 #include <random>
-#define MAX 800000
 using bint = unsigned long long;
 
 class crypto {
 private:
     bint p, q, n, l, e, d;
-    bint M, table[MAX];
+    bint M, MAX;
 public:
     void init();
     crypto() {
+        MAX = 8000000;
         init();
     }
     bint extended_euclidean(bint&, bint&);
@@ -25,12 +25,19 @@ bint crypto::extended_euclidean(bint& a, bint& b) {
     bint x = 1, y = 0, u = 0, v = 1, s = a, t = b;
     bint k = 0, tmp = 0;
     while (t) {
-        k = s / t, s -= k * t;
-        tmp = s, s = t, t = tmp;
+        k = s / t;
+        s -= k * t;
+        tmp = s;
+        s = t;
+        t = tmp;
         x -= k * u;
-        tmp = x, x = u, u = tmp;
+        tmp = x;
+        x = u;
+        u = tmp;
         y -= k * v;
-        tmp = y, y = v, v = tmp;
+        tmp = y;
+        y = v;
+        v = tmp;
     }
     if (x > y) return y;
     return x;
@@ -99,10 +106,11 @@ bint crypto::Chinese_Remainder_Theorem(bint &p, bint &q, bint &c, bint &d) {
 void crypto::init() {
     bint* sieve = new bint[MAX];
     for (size_t i = 0; i < MAX; i++) sieve[i] = true;
-    bint tmp, dumy;
-    for(size_t i = 2; i <= MAX; i++) {
+    bint tmp;
+    sieve[1] = false;
+    for(size_t i = 3; i <= MAX; i+=2) {
         if(sieve[i] == true) {
-            for(size_t j = i * 2; j <= MAX; j += i) {
+            for(size_t j = 2 * i; j <= MAX; j += i) {
                 sieve[j] = false;
             }
         }
@@ -110,14 +118,21 @@ void crypto::init() {
     std::random_device rnd;
     std::mt19937_64 mt(rnd());
     std::uniform_int_distribution<> rand(300000, MAX);
-    dumy = -1;
+    tmp = rand(mt);
     while (1) {
-        tmp = rand(mt);
-        if (sieve[tmp]) p = tmp;
-        tmp = rand(mt);
-        if (sieve[tmp]) q = tmp;
-        if (p != 0 && q != 0) dumy = 0;
-        if (dumy == 0) break;
+        if (sieve[tmp]) {
+            p = tmp;
+            break;
+        }
+        tmp += 1;
+    }
+    tmp = rand(mt);
+    while (1) {
+        if (sieve[tmp]) {
+            q = tmp;
+            break;
+        }
+        tmp += 1;
     }
     if (p < q) {
         tmp = p;
