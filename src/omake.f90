@@ -204,7 +204,7 @@ contains
 
     integer(8) function Chinese_Remainder_Theorem(p, q, c, d)
         implicit none
-        integer(8), intent(inout) :: p, q, c, d
+        integer(8), intent(in) :: p, q, c, d
         integer(8) m1, m2, dp, dq, qinv, m, h
         qinv = modinv(q, p)
         dp = mod(d, (p-1))
