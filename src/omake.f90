@@ -95,25 +95,25 @@ program main
     implicit none
     integer(8) plain_num, encrypted_num
     type(rsa_class) :: rc
-    do
-        call init(rc)
-        rc%n = rc%p * rc%q
-        rc%l = lcm(rc%p - 1, rc%q - 1)
-        rc%e = 65537
-        do while (gcd(rc%l, rc%e) .ne. 1)
-            rc%e = rc%e + 1
-        end do
-        rc%d = extended_euclidean(rc%l, rc%e)
-        if (mod((rc%e * rc%d), rc%l) .eq. 1) exit
+    call init(rc)
+    rc%n = rc%p * rc%q
+    rc%l = lcm(rc%p - 1, rc%q - 1)
+    rc%e = 65537
+    do while (gcd(rc%l, rc%e) .ne. 1)
+        rc%e = rc%e + 1
+    end do
+    rc%d = extended_euclidean(rc%l, rc%e)
+    do while (mod((rc%e * rc%d), rc%l) .eq. 1)
+        rc%d = rc%d + 1
     end do
     print '("P : ", I0, "  Q : ", I0)', rc%p, rc%q
     print '("N : ", I0, "  L : ", I0, "  E : ", I0, "  D : ", I0)', rc%n, rc%l, rc%e, rc%d
-    write (*, '(A)', advance='no') "plain_num : "
+    write (*, '(A)', advance='no') "plain_num     : "
     read *, plain_num
     encrypted_num = modPow(plain_num, rc%e, rc%n)
-    print '("encrypted_num: ", I0)', encrypted_num
+    print '("encrypted_num : ", I0)', encrypted_num
     rc%m = Chinese_Remainder_Theorem(rc%p, rc%q, encrypted_num, rc%d)
-    print '("decrypted_num: ", I0)', rc%m
+    print '("decrypted_num : ", I0)', rc%m
 contains
     pure integer(8) function gcd(a, b)
         implicit none
@@ -138,44 +138,46 @@ contains
         lcm = a * b / gcd(a, b)
     end function lcm
 
-    integer(8) function extended_euclidean(a, b)
+    pure integer(8) function extended_euclidean(a, b)
         implicit none
-        integer(8), intent(inout) :: a, b
+        integer(8), intent(in) :: a, b
         integer(8) x, y, nx, ny
         integer(8) q, r, xt, yt
-        x  = 1;
-        y  = 0;
-        nx = 0;
-        ny = 1;
-        do while (mod(a, b) .ne. 0)
-            q  = a / b
-            r  = mod(a, b)
+        integer(8) t, u
+        t  = a
+        u  = b
+        x  = 1
+        y  = 0
+        nx = 0
+        ny = 1
+        do while (mod(t, u) .ne. 0)
+            q  = t / u
+            r  = mod(t, u)
             xt = x - q * nx
             yt = y - q * ny
-            a  = b
-            b  = r
+            t  = u
+            u  = r
             x  = nx
             y  = ny
             nx = xt
             ny = yt
         end do
         if (nx > ny) then
-            extended_euclidean = ny
-        else
             extended_euclidean = nx
+        else
+            extended_euclidean = ny
         end if
     end function extended_euclidean
 
-    integer(8) function modPow(a, k, n)
+    pure integer(8) function modPow(a, k, n)
         implicit none
-        integer(8), intent(inout) :: a
-        integer(8), intent(in) :: k, n
-        integer(8) i, va
-        a = mod(a, n)
-        if (a .eq. 0 .or. n .eq. 0) modPow = 0
+        integer(8), intent(in) :: a, k, n
+        integer(8) i, va, t
+        t = mod(a, n)
+        if (t .eq. 0 .or. n .eq. 0) modPow = 0
         if (k .eq. 0) modPow = mod(1, n)
         do i = 0, k
-            va = va * a
+            va = va * t
             if (va >= n) va = mod(va, n)
         end do
         modPow = va
@@ -214,3 +216,4 @@ contains
         Chinese_Remainder_Theorem = m
     end function Chinese_Remainder_Theorem
 end program main
+
