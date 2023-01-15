@@ -1,6 +1,6 @@
 ! FortranでRSA暗号を作る(C++からの書き換え)
 !
-! お願いします。だれかバグ直して；；
+! FortranでRSA暗号を作る(C++からの書き換え)
 module rsa
     implicit none
     type rsa_class
@@ -64,7 +64,7 @@ contains
             tmp = tmp + 1
         end do
         if (rc%p < rc%q) then
-            tmp = rc%p
+            tmp  = rc%p
             rc%p = rc%q
             rc%q = tmp
         end if
@@ -103,7 +103,7 @@ program main
         rc%e = rc%e + 1
     end do
     rc%d = extended_euclidean(rc%l, rc%e)
-    do while (mod((rc%e * rc%d), rc%l) .eq. 1)
+    do while (mod((rc%e * rc%d), rc%l) .ne. 1)
         rc%d = rc%d + 1
     end do
     print '("P : ", I0, "  Q : ", I0)', rc%p, rc%q
@@ -132,40 +132,39 @@ contains
         gcd = y
     end function gcd
 
-    pure integer(8) function lcm(a, b)
+    pure integer(8) function Lcm(x, y)
         implicit none
-        integer(8), intent(in) :: a, b
-        lcm = a * b / gcd(a, b)
-    end function lcm
+        integer(8), intent(in) :: x, y
+        Lcm = x / gcd(x, y) * y
+    end function Lcm
 
     pure integer(8) function extended_euclidean(a, b)
         implicit none
         integer(8), intent(in) :: a, b
-        integer(8) x, y, nx, ny
-        integer(8) q, r, xt, yt
-        integer(8) t, u
-        t  = a
-        u  = b
-        x  = 1
-        y  = 0
-        nx = 0
-        ny = 1
-        do while (mod(t, u) .ne. 0)
-            q  = t / u
-            r  = mod(t, u)
-            xt = x - q * nx
-            yt = y - q * ny
-            t  = u
-            u  = r
-            x  = nx
-            y  = ny
-            nx = xt
-            ny = yt
+        integer(8) s, t, xs, ys, xt, yt
+        integer(8) tmp, u, xu, yu
+        s  = a
+        t  = b
+        xs = 1
+        ys = 0
+        xt = 0
+        yt = 1
+        do while (mod(s, t) .ne. 0)
+            tmp = s / t
+            u   = s - t * tmp
+            xu  = xs - xt * tmp
+            yu  = ys - yt * tmp
+            s   = t
+            xs  = xt
+            ys  = yt
+            t   = u
+            xt  = xu
+            yt  = yu
         end do
-        if (nx > ny) then
-            extended_euclidean = nx
+        if (xt > yt) then
+            extended_euclidean = xt
         else
-            extended_euclidean = ny
+            extended_euclidean = yt
         end if
     end function extended_euclidean
 
@@ -174,21 +173,27 @@ contains
         integer(8), intent(in) :: a, k, n
         integer(8) i, va, t
         t = mod(a, n)
-        if (t .eq. 0 .or. n .eq. 0) modPow = 0
-        if (k .eq. 0) modPow = mod(1, n)
-        do i = 0, k
+        if (a .eq. 0 .or. n .eq. 0) then
+            modPow = 0
+        else if (k .eq. 0) then
+            modPow = mod(1, n)
+        end if
+        va = 1
+        do i = 0, k-1
             va = va * t
             if (va >= n) va = mod(va, n)
         end do
         modPow = va
     end function modPow
 
-    integer(8) function modinv(a, m)
+    pure integer(8) function modinv(a, m)
         implicit none
         integer(8), intent(in) :: a, m
-        integer(8) :: j = 1, i = 0, b, c, x, y
+        integer(8) j, i, b, c, x, y
         b = m
         c = a
+        j = 1
+        i = 0
         do while (c .ne. 0)
             x = b / c
             y = b - x*c
@@ -202,17 +207,17 @@ contains
         modinv = i
     end function modinv
 
-    integer(8) function Chinese_Remainder_Theorem(p, q, c, d)
+    pure integer(8) function Chinese_Remainder_Theorem(p, q, c, d)
         implicit none
         integer(8), intent(in) :: p, q, c, d
         integer(8) m1, m2, dp, dq, qinv, m, h
         qinv = modinv(q, p)
-        dp = mod(d, (p-1))
-        dq = mod(d, (q-1))
-        m1 = modPow(c, dp, p)
-        m2 = modPow(c, dq, q)
-        h = qinv * (m1 - m2)
-        m = m2 + h * q
+        dp   = mod(d, (p-1))
+        dq   = mod(d, (q-1))
+        m1   = modPow(c, dp, p)
+        m2   = modPow(c, dq, q)
+        h    = qinv * (m1 - m2)
+        m    = m2 + h * q
         Chinese_Remainder_Theorem = m
     end function Chinese_Remainder_Theorem
 end program main
