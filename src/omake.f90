@@ -1,6 +1,4 @@
 ! FortranでRSA暗号を作る(C++からの書き換え)
-!
-! FortranでRSA暗号を作る(C++からの書き換え)
 module rsa
     implicit none
     type rsa_class
