@@ -191,6 +191,8 @@ void crypto::start() {
     //復号
     M = Chinese_Remainder_Theorem(p, q, encrypted_num, d);
     printf("decrypted_num(CRT): %llu\n", M);
+    //bint decrypted_num = modPow(encrypted_num, d, n);
+    //printf("decrypted_num:      %llu\n", decrypted_num);
 }
 
 int main() {
