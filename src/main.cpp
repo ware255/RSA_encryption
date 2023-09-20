@@ -1,18 +1,19 @@
 #include <cstdio>
-#include <random>
+#include <windows.h>
 using bint = unsigned long long;
 
 class crypto {
 private:
     bint p, q, n, l, e, d;
-    bint M, MAX;
+    bint M, MAX = 8000000;
 public:
+    bint random(bint);
+    bint sqrt(double);
+    bool isPrime(bint);
     void init();
-    crypto() {
-        MAX = 8000000;
-        init();
-    }
-    bint extended_euclidean(bint&, bint&);
+    void init();
+    crypto() { init(); }
+    bint extended_euclidean(bint, bint);
     bint gcd(bint, bint);
     bint lcm(bint, bint);
     bint modPow(bint, bint, bint);
@@ -21,25 +22,30 @@ public:
     void start();
 };
 
-bint crypto::extended_euclidean(bint& a, bint& b) {
-    bint x = 1, y = 0, u = 0, v = 1, s = a, t = b;
-    bint k = 0, tmp = 0;
-    while (t) {
-        k = s / t;
-        s -= k * t;
-        tmp = s;
-        s = t;
-        t = tmp;
-        x -= k * u;
-        tmp = x;
-        x = u;
-        u = tmp;
-        y -= k * v;
-        tmp = y;
-        y = v;
-        v = tmp;
+bint crypto::extended_euclidean(bint a, bint b) {
+    bint x1 = 0, y1 = 1, r1 = b;
+    bint x2 = 1, y2 = 0, r2 = a;
+    bint x;
+    bint qq, rr;
+    bint xx, yy;
+    
+    while (1) {
+        qq = r1 / r2;
+        rr = r1 % r2;
+
+        xx = x1 - qq * x2;
+        yy = y1 - qq * y2;
+
+        if (rr == 0) {
+            x = x2;
+            break;
+        }
+
+        x1 = x2; y1 = y2; r1 = r2;
+        x2 = xx; y2 = yy; r2 = rr;
     }
-    if (x > y) return y;
+    while ( x <= 0 ) x += b;
+
     return x;
 }
 
@@ -103,60 +109,72 @@ bint crypto::Chinese_Remainder_Theorem(bint &p, bint &q, bint &c, bint &d) {
     return m;
 }
 
+bint crypto::random(bint n) {
+    static bint x = 123456789;
+    static bint y = 362436069;
+    static bint z = 521288629;
+    n = n ^ (n << 7); n = n ^ (n >> 9);
+    static bint w = n ^ 2463534242;
+    int t, m;
+    m = n % 10;
+
+    for (int i = 0; i < m; i++) {
+        t = x ^ (x << 11);
+        x = y; y = z; z = w;
+        w = (w ^ (w >> 19)) ^ (t ^ (t >> 8));
+    }
+    return w;
+}
+
+bint crypto::sqrt(double x) {
+    double s, last;
+
+    if (x > 1.0) s = x;
+    else s = 1.0;
+
+    do {
+        last = s;
+        s = (x / s + s) / 2.0;
+    } while (s < last);
+
+    return static_cast<int>(last);
+}
+
+bool crypto::isPrime(bint a) {
+    if (a % 2 == 0 || a <= 2) return false;
+    for (bint i = 3; i <= sqrt(a); i += 2) if (a % i == 0) return false;
+    return true;
+}
+
 void crypto::init() {
-    bint* sieve = new bint[MAX];
-    for (size_t i = 0; i < MAX; i++) sieve[i] = true;
     bint tmp;
-    sieve[1] = false;
-    for(size_t i = 3; i <= MAX; i+=2) {
-        if(sieve[i] == true) {
-            for(size_t j = 2 * i; j <= MAX; j += i) {
-                sieve[j] = false;
-            }
-        }
-    }
-    std::random_device rnd;
-    std::mt19937_64 mt(rnd());
-    std::uniform_int_distribution<> rand(300000, MAX);
-    tmp = rand(mt);
+    bint randseed = 0x12345678 ^ GetTickCount();
+    p = random(randseed) % MAX;
+    q = random(randseed) % MAX;
     while (1) {
-        if (sieve[tmp]) {
-            p = tmp;
-            break;
-        }
-        tmp += 1;
+        if (!isPrime(p)) p++;
+        else break;
     }
-    tmp = rand(mt);
     while (1) {
-        if (sieve[tmp]) {
-            q = tmp;
-            break;
-        }
-        tmp += 1;
+        if (!isPrime(q)) q++;
+        else break;
     }
     if (p < q) {
         tmp = p;
         p = q;
         q = tmp;
     }
-    delete [] sieve;
 }
 
 void crypto::start() {
-    while (1) {
-        n = p * q;
+    init();
+    n = p * q;
+    l = lcm(p-1, q-1);
+    e = 3;
+    while (gcd(e, l) != 1) e += 2;
+    d = extended_euclidean(e, l);
+    while(e * d % l != 1) d++;
 
-        l = lcm(p-1, q-1);
-
-        e = 65535;
-        while (gcd(l, e) != 1) {
-            e++;
-        }
-
-        d = extended_euclidean(l, e);
-        if (((e * d) % l) == 1) break;
-        init();
-    }
     printf("P : %lld   Q : %lld\n", p, q);
 
     printf("N : %lld   L : %lld   E : %lld   D : %lld\n", n, l, e, d);
