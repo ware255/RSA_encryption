@@ -1,16 +1,16 @@
+#include <iostream>
 #include <cstdio>
 #include <windows.h>
-using bint = unsigned long long;
+using bint = long long;
 
 class crypto {
 private:
     bint p, q, n, l, e, d;
-    bint M, MAX = 8000000;
+    bint M, MAX = 10000000;
 public:
     bint random(bint);
     bint sqrt(double);
     bool isPrime(bint);
-    void init();
     void init();
     crypto() { init(); }
     bint extended_euclidean(bint, bint);
@@ -137,7 +137,7 @@ bint crypto::sqrt(double x) {
         s = (x / s + s) / 2.0;
     } while (s < last);
 
-    return static_cast<int>(last);
+    return static_cast<bint>(last);
 }
 
 bool crypto::isPrime(bint a) {
@@ -167,13 +167,14 @@ void crypto::init() {
 }
 
 void crypto::start() {
-    init();
     n = p * q;
     l = lcm(p-1, q-1);
-    e = 3;
+    e = 65537;
     while (gcd(e, l) != 1) e += 2;
     d = extended_euclidean(e, l);
-    while(e * d % l != 1) d++;
+    if (d % 2 == 0) d += 1;
+    else if (d < 0) d = -1 * d;
+    while((e * d % l) != 1) d+=2;
 
     printf("P : %lld   Q : %lld\n", p, q);
 
@@ -190,14 +191,11 @@ void crypto::start() {
     //復号
     M = Chinese_Remainder_Theorem(p, q, encrypted_num, d);
     printf("decrypted_num(CRT): %llu\n", M);
-    bint decrypted_num = modPow(encrypted_num, d, n);
-    printf("decrypted_num:      %llu\n", decrypted_num);
 }
 
 int main() {
-    crypto* t;
-    t = new crypto();
-    t->start();
-    delete t;
+    crypto t;
+    t.start();
+    std::cin.ignore();std::cin.get();
     return 0;
 }
