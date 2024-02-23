@@ -137,7 +137,7 @@ bint crypto::sqrt(double x) {
         s = (x / s + s) / 2.0;
     } while (s < last);
 
-    return static_cast<bint>(last);
+    return static_cast<bint>(sqrt(last));
 }
 
 bool crypto::isPrime(bint a) {
@@ -148,7 +148,7 @@ bool crypto::isPrime(bint a) {
 
 void crypto::init() {
     bint tmp;
-    bint randseed = 0x12345678 ^ GetTickCount();
+    bint randseed = 0x12345678 ^ GetTickCount64();
     p = random(randseed) % MAX;
     q = random(randseed) % MAX;
     while (1) {
@@ -182,7 +182,7 @@ void crypto::start() {
 
     bint plain_num;
     printf("plain_num : ");
-    scanf("%llu", &plain_num);
+    scanf_s("%lld", &plain_num);
 
     //暗号化
     bint encrypted_num = modPow(plain_num, e, n);
